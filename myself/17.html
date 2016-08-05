@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>线段生成器</title>
+    <script src="../lib/d3.js"></script>
+    <style>
+
+        .node circle {
+            fill: #fff;
+            stroke: steelblue;
+            stroke-width: 1.5px;
+        }
+
+        .node {
+            font: 12px sans-serif;
+        }
+
+        .link {
+            fill: none;
+            stroke: #ccc;
+            stroke-width: 1.5px;
+        }
+        .axis path{fill:none;stroke:#000;}
+        .axis line { stroke: #000; stroke-width: 1px;}
+
+
+    </style>
+</head>
+<body>
+    <script type="text/javascript">
+        let width = document.body.clientWidth || document.documentElement.clientWidth;
+        let height = document.body.clientWidth || document.documentElement.clientHeight;
+        let svg = d3.select('body').append('svg').attr('width',width).attr('height',height).style('background','#eee');
+        let data = [80,120,160,200,240,280];
+        //创建线段生成器
+        let linePath = d3.svg.line();
+        linePath.x(function(d) {
+            return d;
+        });
+        linePath.y(function(d,i) {
+            return i%2 ? 80 :120;
+        })
+        linePath.interpolate('linear').defined(function(d) {
+            return d>100
+        })
+        svg.append('path').attr('d',linePath(data)).attr('fill','none').style('stroke','#000');
+    </script>
+</body>
+</html>

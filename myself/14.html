@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>渐变</title>
+    <script src="../lib/d3.js"></script>
+    <style>
+
+        .node circle {
+            fill: #fff;
+            stroke: steelblue;
+            stroke-width: 1.5px;
+        }
+
+        .node {
+            font: 12px sans-serif;
+        }
+
+        .link {
+            fill: none;
+            stroke: #ccc;
+            stroke-width: 1.5px;
+        }
+
+
+    </style>
+</head>
+<body>
+    <svg width="300" height="300">
+        <defs>
+            <linearGradient id="MyGradient">
+                <stop offset="5%"  stop-color="green"/>
+                <stop offset="95%" stop-color="gold"/>
+            </linearGradient>
+        </defs>
+
+        <rect fill="url(#MyGradient)" x="10" y="10" width="100" height="100"/>
+        <!--<line x1="100" y1="100" x2="200" y2="200" marker-end="url(#arrow)" marker-start="url(#arrow)" marker-mid="url(#arrow)" style="stroke:#000;"/>-->
+    </svg>
+</body>
+</html>

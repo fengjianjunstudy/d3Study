@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>区域生成器</title>
+    <script src="../lib/d3.js"></script>
+    <style>
+
+        .node circle {
+            fill: #fff;
+            stroke: steelblue;
+            stroke-width: 1.5px;
+        }
+
+        .node {
+            font: 12px sans-serif;
+        }
+
+        .link {
+            fill: none;
+            stroke: #ccc;
+            stroke-width: 1.5px;
+        }
+        .axis path{fill:none;stroke:#000;}
+        .axis line { stroke: #000; stroke-width: 1px;}
+        .circle circle{stroke:red; fill: #eee; stroke-width: 2px;}
+
+    </style>
+</head>
+<body>
+    <script type="text/javascript">
+        let width = document.body.clientWidth || document.documentElement.clientWidth;
+        let height = document.body.clientWidth || document.documentElement.clientHeight;
+        let svg = d3.select('body').append('svg').attr('width',width).attr('height',height).style('background','#eee');
+        let data = [80,120,130,70,60,90];
+        let color = d3.scale.category20();
+        //创建区域生成器
+        let areaPath = d3.svg.area();
+        let areaPath1 = d3.svg.area();
+        areaPath.y(function(d,i) {
+         return 50 + i*80;
+         })
+         areaPath.x0(function(d) {
+         return width/2;
+         })
+         areaPath.x1(function(d,i) {
+         return width/2 +d
+         }).interpolate('monotone ')
+        svg.append('path').style('stroke','#ccc').style('stroke-width','1px').transition().duration(1000).attr('d',areaPath(data)).attr('fill',function() {
+            return color(0);
+        });
+        let g_layout  = svg.selectAll('.circle').data(data)
+                .enter()
+                .append('g')
+                .attr('class','circle')
+        g_layout.append('circle')
+                .attr('cx',function(d,i) {
+                    return width/2+d;
+                })
+                .attr('cy',function(d,i) {
+                    return 50 + i*80;
+                })
+                .attr('r',5)
+                .on('mouseover',function() {
+                    console.log(d3.select(this))
+                    d3.select(this).attr('r',9);
+                })
+                .on('mouseout',function() {
+                    d3.select(this).attr('r',5);
+                })
+                .transition()
+                .duration(1000);
+        let city_data = ['北京','上海','天津','太原','济南','杭州']
+        g_layout.append('text')
+                .text(function(d,i) {
+                    return city_data[i];
+                })
+                .attr('y',function(d,i) {
+                    return 50 + i*80;
+                })
+                .attr('x',function(d,i) {
+                    return width/2 +d
+                })
+                .attr('dy',10)
+                .attr('dx',10)
+                .attr('text-anchor','left')
+
+        //50 250 170
+        //130 250 130
+        //210 250 120
+        //290 250 180
+        //370 250 190
+        //450 250 160
+    </script>
+</body>
+</html>

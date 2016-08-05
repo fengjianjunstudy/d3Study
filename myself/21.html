@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>弧生成器</title>
+    <script src="../lib/d3.js"></script>
+    <style>
+
+        .node circle {
+            fill: #fff;
+            stroke: steelblue;
+            stroke-width: 1.5px;
+        }
+
+        .node {
+            font: 12px sans-serif;
+        }
+
+        .link {
+            fill: none;
+            stroke: #ccc;
+            stroke-width: 1.5px;
+        }
+        .axis path{fill:none;stroke:#000;}
+        .axis line { stroke: #000; stroke-width: 1px;}
+        .circle circle{stroke:red; fill: #eee; stroke-width: 2px;}
+
+    </style>
+</head>
+<body>
+    <script type="text/javascript">
+        let width = document.body.clientWidth || document.documentElement.clientWidth;
+        let height = document.body.clientWidth || document.documentElement.clientHeight;
+        let svg = d3.select('body').append('svg').attr('width',width).attr('height',height).style('background','#eee');
+        let data = [{startAngle:0,endAngle:Math.PI/180*30,name:'北京'},{startAngle:Math.PI/180*30,endAngle:Math.PI/180*90,name:'上海'},{startAngle:Math.PI/180*90,endAngle:Math.PI/180*150,name:'天津'},{startAngle:Math.PI/180*150,endAngle:Math.PI/180*260,name:'太原'},{startAngle:Math.PI/180*260,endAngle:Math.PI/180*360,name:'广州'}];
+        let color = d3.scale.category20();
+        let innerRadius = 100;
+        let outerRadius = 200;
+        //创建弧生成器
+        let arcPath = d3.svg.arc();
+        arcPath.innerRadius(innerRadius).outerRadius(outerRadius);
+        let g = svg.append('g').attr('transform',function() {
+            return `translate(${outerRadius+100},${outerRadius+100})`
+        });
+        g.selectAll('path').data(data).enter().append('path')
+                .attr('d',function(d) {
+                    return arcPath(d);
+                })
+                .attr('fill',function(d,i) {
+                    return color(i);
+                })
+                .on('mouseover',function(d) {
+                    arcPath.innerRadius(function() {
+                        return innerRadius*1.1;
+                    }).outerRadius(function() {
+                        return outerRadius*1.1;
+                    });
+                    d3.select(this).attr('d',arcPath(d)).style('opacity',0.5);
+                })
+                .on('mouseout',function(d) {
+                    arcPath.innerRadius(function() {
+                        return innerRadius;
+                    }).outerRadius(function() {
+                        return outerRadius;
+                    });
+                    d3.select(this).attr('d',arcPath(d)).style('opacity',1);
+                })
+
+        g.selectAll('text').data(data).enter().append('text')
+                .text(function(d) {
+                    return d.name;
+                })
+                .each(function(d,i) {
+                    d.centroid = arcPath.centroid(d,i);
+                    d.middleAngle = (d.endAngle - d.startAngle)/2 + d.startAngle;
+                })
+                .attr('text-anchor','middle')
+                .attr('x',function(d,i){
+                    return d.centroid[0];
+                })
+                .attr('y',function(d,i){
+                    return d.centroid[1];
+                })
+                .attr('transform',function(d) {
+                    //return 'rotate(45)'
+                    let middleAngle = d.middleAngle*180/Math.PI;
+                    let m = middleAngle>90 && middleAngle<270?(middleAngle-180) :middleAngle;
+                    return  `rotate(${m},${d.centroid[0]},${d.centroid[1]})`;
+                })
+    </script>
+</body>
+</html>

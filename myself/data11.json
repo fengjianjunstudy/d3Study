@@ -1,0 +1,25 @@
+{
+  "name": "中国",
+  "children": [
+    {
+      "name": "山西",
+      "children": [
+        {
+          "name": "晋中",
+          "children": [
+            {"name": "平遥", "size": 3938},
+            {"name": "介休", "size": 3812},
+            {"name": "太原", "size": 743}
+          ]
+        },
+        {
+          "name": "运城",
+          "children": [
+            {"name": "永济", "size": 3534},
+            {"name": "芮城", "size": 5731}
+          ]
+        }
+      ]
+    }
+  ]
+}

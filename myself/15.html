@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>坐标轴</title>
+    <script src="../lib/d3.js"></script>
+    <style>
+
+        .node circle {
+            fill: #fff;
+            stroke: steelblue;
+            stroke-width: 1.5px;
+        }
+
+        .node {
+            font: 12px sans-serif;
+        }
+
+        .link {
+            fill: none;
+            stroke: #ccc;
+            stroke-width: 1.5px;
+        }
+        .axis path{fill:none;stroke:#000;}
+        .axis line { stroke: #000; stroke-width: 1px;}
+
+
+    </style>
+</head>
+<body>
+    <script type="text/javascript">
+        let width = document.body.clientWidth || document.documentElement.clientWidth;
+        let height = document.body.clientWidth || document.documentElement.clientHeight;
+        let svg = d3.select('body').append('svg').attr('width',width).attr('height',height);
+        let linear = d3.scale.linear();
+        //线性比例尺的坐标轴
+        //let ticks=linear.domain([0,100]).range([0,1000]).ticks(3);
+        //let axis = d3.svg.axis().scale(linear).orient('bottom').ticks(8);
+        //指数比例尺
+//        let pow = d3.scale.pow().exponent(4);
+//        pow.domain([0,3]).range([0,1000]); //相当于线性比例尺的domain([0,81]).range([0,1000])
+//        console.log(pow(0),pow(1),pow(2),pow(3))
+//        let axis = d3.svg.axis().orient('bottom').ticks(5).scale(pow);
+        //序数比例尺
+        let ordinal = d3.scale.ordinal();
+        ordinal.domain(d3.range(5)).rangeRoundBands([0,100],0,0.7);
+        console.log(ordinal.rangeBand())
+        let axis = d3.svg.axis().scale(ordinal).orient('bottom');
+        svg.append('g').attr('class','axis').call(axis);
+    </script>
+</body>
+</html>

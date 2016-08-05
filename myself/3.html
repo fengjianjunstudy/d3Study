@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>比例尺</title>
+    <script src="../lib/d3.js"></script>
+    <style type="text/css">
+        .c{color: red;}
+    </style>
+</head>
+<body>
+    <script>
+        'use strict';
+        //线性比例尺
+//        let dataset = [1.2, 2.3, 0.9, 1.5, 3.3];
+//        let min = d3.min(dataset),
+//            max = d3.max(dataset);
+//        let linear = d3.scale.linear().domain([min,max]).range([0,200]);
+        //序数比例尺
+        let index = [0, 1, 2, 3, 4];
+        let color = ["red", "blue", "green", "yellow", "black"];
+        let ordinal = d3.scale.ordinal().domain(index).range(color);
+        console.log(ordinal);
+        console.log(ordinal(0));
+    </script>
+</body>
+</html>

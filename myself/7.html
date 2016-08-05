@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>饼状图</title>
+    <script src="../lib/d3.js"></script>
+    <style>
+        .axis path,
+        .axis line{
+            fill: none;
+            stroke: black;
+            shape-rendering: crispEdges;
+        }
+
+        .axis text {
+            font-family: sans-serif;
+            font-size: 11px;
+        }
+
+        .MyRect {
+
+        }
+
+        .MyText {
+            fill: white;
+            text-anchor: middle;
+        }
+    </style>
+</head>
+<body>
+    <script>
+        'use strict';
+        let width = document.body.clientWidth || document.documentElement.clientWidth,
+            height = document.body.clientHeight || document.documentElement.clientHeight;
+        let svg = d3.select('body')
+                .append('svg')
+                .attr('width',width)
+                .attr('height',height);
+        let dataset = [ 30 , 10 , 43 , 55 , 13 ];
+        let pie = d3.layout.pie();
+        let color = d3.scale.category10();
+        let pieData = pie(dataset);
+        let r1 = 300;
+        let r2 = 0;
+        let arc = d3.svg.arc().innerRadius(r2).outerRadius(r1);
+        let arcs = svg.selectAll('g').data(pieData)
+                .enter()
+                .append('g')
+                .attr('transform','translate('+width/2+','+height/2+')');
+        arcs.append('path')
+                .attr('fill',function(d,i) {
+                    return color(i);
+                })
+                .attr('d',function(d,i){
+                    return arc(d);
+                })
+        arcs.append('text')
+                .attr('transform',function(d) {
+                    return "translate(" + arc.centroid(d) + ")";
+                })
+                .attr('text-anchor','middle')
+                .text(function(d,i) {
+                    return d.data;
+                });
+
+    </script>
+</body>
+</html>

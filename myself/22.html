@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>符号生成器</title>
+    <script src="../lib/d3.js"></script>
+    <style>
+
+        .node circle {
+            fill: #fff;
+            stroke: steelblue;
+            stroke-width: 1.5px;
+        }
+
+        .node {
+            font: 12px sans-serif;
+        }
+
+        .link {
+            fill: none;
+            stroke: #ccc;
+            stroke-width: 1.5px;
+        }
+        .axis path{fill:none;stroke:#000;}
+        .axis line { stroke: #000; stroke-width: 1px;}
+        .circle circle{stroke:red; fill: #eee; stroke-width: 2px;}
+
+    </style>
+</head>
+<body>
+    <script type="text/javascript">
+        let width = document.body.clientWidth || document.documentElement.clientWidth;
+        let height = document.body.clientWidth || document.documentElement.clientHeight;
+        let svg = d3.select('body').append('svg').attr('width',width).attr('height',height).style('background','#eee');
+        let data = [{startAngle:0,endAngle:Math.PI/180*30,name:'北京'},{startAngle:Math.PI/180*30,endAngle:Math.PI/180*90,name:'上海'},{startAngle:Math.PI/180*90,endAngle:Math.PI/180*150,name:'天津'},{startAngle:Math.PI/180*150,endAngle:Math.PI/180*260,name:'太原'},{startAngle:Math.PI/180*260,endAngle:Math.PI/180*360,name:'广州'}];
+        let color = d3.scale.category20();
+        //创建符号生成器
+        let symbolPath = d3.svg.symbol();
+        let types = d3.svg.symbolTypes;
+        symbolPath.size(100)
+        svg.append('g').selectAll('.symbol').data(types).enter()
+                .append('path')
+                .attr('class','symbol')
+                .attr('d',function(d) {
+                    symbolPath.type(d);
+                    return symbolPath();
+                })
+                .attr('transform',function(d,i) {
+                    return `translate(${100+i*20},100)`
+                })
+    </script>
+</body>
+</html>

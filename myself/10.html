@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>标记</title>
+    <script src="../lib/d3.js"></script>
+    <style>
+
+        .node circle {
+            fill: #fff;
+            stroke: steelblue;
+            stroke-width: 1.5px;
+        }
+
+        .node {
+            font: 12px sans-serif;
+        }
+
+        .link {
+            fill: none;
+            stroke: #ccc;
+            stroke-width: 1.5px;
+        }
+
+
+    </style>
+</head>
+<body>
+    <svg width="300" height="300">
+        <defs>
+            <marker id="arrow" markerUnits="strokeWidth" refX="6" refY="6" markerWidth="12" markerHeight="12" viewBox="0 0 12 12" orient="auto">
+                <path d="M2,2 L10,6 L2,10 L6,6 L2,2"/>
+            </marker>
+        </defs>
+        <path d="M200,200 L260,260 L100,180 Q100,100 200,200 " marker-mid="url(#arrow)" marker-end="url(#arrow)" style="stroke-width: 1px; stroke: red; fill: none"/>
+        <!--<line x1="100" y1="100" x2="200" y2="200" marker-end="url(#arrow)" marker-start="url(#arrow)" marker-mid="url(#arrow)" style="stroke:#000;"/>-->
+    </svg>
+    <script>
+//        'use strict';
+//        let width = document.body.clientWidth || document.documentElement.clientWidth,
+//            height = document.body.clientHeight || document.documentElement.clientHeight;
+//        let r1 = width/4*0.7;
+//        let r2 = r1*1.1;
+//        let svg = d3.select('body')
+//                .append('svg')
+//                .attr('width',width)
+//                .attr('height',height);
+//        let color = d3.scale.category20();
+//        let cluster = d3.layout.cluster().size([width,height/1.2]);
+//        let diagonal = d3.svg.diagonal()
+//                .projection(function(d) { return [d.x, d.y+10]; });
+//        d3.json('data.json',function(err,root) {
+//            if(err) {
+//                return console.log(err);
+//            }
+//            let nodes = cluster(root);
+//            let links = cluster.links(nodes);
+//            console.log(nodes)
+//            console.log(links);
+//            svg.append('g').selectAll('path').data(links).enter()
+//                    .append('path')
+//                    .attr('d',diagonal)
+//                    .attr('class','link');
+//            let node = svg.selectAll('.node').data(nodes).enter().append('g')
+//                    .attr('transform',function(d){
+//                        return `translate(${d.x},${d.y+10})`
+//                    })
+//                    .attr('class','node')
+//            node.append('circle').attr('r',4.5)
+//                    .on('mouseover',function() {
+//                        d3.select(this).attr('r',6)
+//                    })
+//                    .on('mouseout',function() {
+//                        d3.select(this).attr('r',4.5)
+//                    })
+//                    .transition()
+//                    .duration(1000);
+//            node.append('text')
+//                    .text(function(d) {
+//                        return d.name;
+//                    })
+//                    .attr('transform',function(d) {
+//                        return 'translate(8,3)'
+//                    });
+//        })
+
+    </script>
+</body>
+</html>

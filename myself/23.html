@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>弦生成器</title>
+    <script src="../lib/d3.js"></script>
+    <style>
+
+        .node circle {
+            fill: #fff;
+            stroke: steelblue;
+            stroke-width: 1.5px;
+        }
+
+        .node {
+            font: 12px sans-serif;
+        }
+
+        .link {
+            fill: none;
+            stroke: #ccc;
+            stroke-width: 1.5px;
+        }
+        .axis path{fill:none;stroke:#000;}
+        .axis line { stroke: #000; stroke-width: 1px;}
+        .circle circle{stroke:red; fill: #eee; stroke-width: 2px;}
+
+    </style>
+</head>
+<body>
+    <script type="text/javascript">
+        let width = document.body.clientWidth || document.documentElement.clientWidth;
+        let height = document.body.clientWidth || document.documentElement.clientHeight;
+        let svg = d3.select('body').append('svg').attr('width',width).attr('height',height).style('background','#eee');
+        let data = [
+            {
+                first:{
+                    start:0.2,
+                    end:Math.PI * 0.3,
+                    radius:100
+                },
+                second:{
+                    start:Math.PI * 1,
+                    end:Math.PI * 1.6,
+                    radius:150
+                }
+            },
+            {
+                first:{
+                    start:Math.PI * 0.5,
+                    end:Math.PI * 0.8,
+                    radius:200
+                },
+                second:{
+                    start:Math.PI * 1.5,
+                    end:Math.PI * 2,
+                    radius:100
+                }
+            }
+        ];
+        let color = d3.scale.category20();
+        //创建符号生成器
+        let chordPath = d3.svg.chord();
+        chordPath.source(function(d) {
+                    return d.first;
+                })
+                .target(function(d) {
+                    return d.second;
+                })
+                .startAngle(function(d) {
+                    return d.start;
+                })
+                .endAngle(function(d) {
+                    return d.end;
+                })
+        svg.selectAll('path').data(data).enter()
+                .append('path')
+                .attr('d',function(d) {
+                    return chordPath(d);
+                })
+                .attr('transform','translate(300,300)')
+                .attr('fill',function(d,i) {
+                    return color(i);
+                })
+                .style('stroke','red');
+
+    </script>
+</body>
+</html>
