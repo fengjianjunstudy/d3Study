@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>布局-饼图</title>
+    <script src="../lib/d3.js"></script>
+    <style>
+        .line{ stroke-width: 2px;}
+    </style>
+</head>
+<body>
+    <script type="text/javascript">
+        let width = (document.body.clientWidth || document.documentElement.clientWidth)-16;
+        let height = (document.body.clientHeight || document.documentElement.clientHeight)-20;
+        let svg = d3.select('body').append('svg')
+                .attr('width',function() {
+                    return width;
+                })
+                .attr('height',function() {
+                    return height;
+                })
+                .style('background','#eee');
+        let color = d3.scale.category10();
+        let options = {
+            innerRadius:0,
+            outerRadius:200,
+            pie_interval:500
+        }
+        let data = [['小米',60.8],['三星',58.4],['联想',47.3],['苹果',46.6],['华为',41.3],['酷派',40.1],['其他',111.5]];
+        let pie = d3.layout.pie().value(function(d) {
+            return  d[1];
+        })
+        let piedata = pie(data);
+        let arc = d3.svg.arc()
+                .innerRadius(options.innerRadius)
+                .outerRadius(options.outerRadius);
+        console.log(piedata);
+        let g = svg.selectAll('.pie').data(piedata)
+                .enter()
+                .append('g')
+                .attr('class','pie')
+                .each(function(d) {
+                    d.end = d.endAngle;
+                    d.endAngle = d.startAngle;
+                });
+        //添加饼图路径
+        g.append('path')
+                .attr('class','path')
+                .attr('d',function(d) {
+                    return arc(d);
+                })
+                .attr('fill',function(d,i) {
+                    return color(i);
+                })
+                .attr('transform',function(d) {
+                    return `translate(${width/2},${height/2})`
+                })
+                .transition()
+                .delay(function(d,i) {
+                    return i*options.pie_interval;
+                })
+                .duration(options.pie_interval)
+                .each(function(d) {
+                    d.endAngle = d.end;
+                })
+                .attr('d',function(d){
+                    return arc(d);
+                });
+        g.append('text')
+                .style('opacity',0)
+                .text(function(d) {
+                    return d.value;
+                })
+                .attr('class','text')
+                .attr('x',function(d) {
+                    return arc.centroid(d)[0];
+                })
+                .attr('y',function(d) {
+                    return arc.centroid(d)[1];
+                })
+                .attr('transform',function(d) {
+                    return `translate(${width/2},${height/2})`
+                })
+                .attr('text-anchor','middle')
+                .transition()
+                .delay(function(d,i) {
+                    return i*options.pie_interval;
+                })
+                .duration(options.pie_interval)
+                .style('opacity',1);
+        g.append('line')
+                .attr('class','line')
+                .attr('x1',function(d) {
+                    return arc.centroid(d)[0] * 2;
+                })
+                .attr('y1',function(d) {
+                    return arc.centroid(d)[1] * 2;
+                })
+                .attr('x2',function(d) {
+                    return arc.centroid(d)[0] * 2;
+                })
+                .attr('y2',function(d) {
+                    return arc.centroid(d)[1] * 2;
+                })
+                .attr('transform',function(d) {
+                    return `translate(${width/2},${height/2})`
+                })
+                .attr('stroke',function(d,i) {
+                    return color(i);
+                })
+                .transition()
+                .delay(function(d,i) {
+                    return i*options.pie_interval;
+                })
+                .duration(options.pie_interval)
+                .attr('x2',function(d) {
+                    return arc.centroid(d)[0] * 2.2;
+                })
+                .attr('y2',function(d) {
+                    return arc.centroid(d)[1] * 2.2;
+                })
+        g.append('text')
+                .style('opacity',0)
+                .text(function(d) {
+                    return d.data[0];
+                })
+                .attr('class','name')
+                .attr('x',function(d) {
+                    return arc.centroid(d)[0] * 2.3;
+                })
+                .attr('y',function(d) {
+                    return arc.centroid(d)[1] * 2.3;
+                })
+                .attr('transform',function(d) {
+                    let rotate = (d.endAngle- d.startAngle)/2+ d.startAngle;
+                    if(rotate>Math.PI/2 && rotate<Math.PI*3/2) {
+                        rotate = rotate-Math.PI;
+                        return `translate(${width/2},${height/2}) rotate(${rotate*180/Math.PI} ${arc.centroid(d)[0] * 2.3} ${arc.centroid(d)[1] * 2.3})  translate(${arc.centroid(d)[0] * 0.1},${arc.centroid(d)[1] * 0.1}) `
+                    }else {
+                        return `translate(${width/2},${height/2}) rotate(${rotate*180/Math.PI} ${arc.centroid(d)[0] * 2.3} ${arc.centroid(d)[1] * 2.3})  `
+                    }
+
+                })
+                .attr('text-anchor','middle')
+                .transition()
+                .delay(function(d,i) {
+                    return i*options.pie_interval+options.pie_interval;
+                })
+                .duration(options.pie_interval)
+                .style('opacity',1);
+
+
+
+    </script>
+</body>
+</html>

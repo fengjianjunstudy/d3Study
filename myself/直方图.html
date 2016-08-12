@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>布局-直方图</title>
+    <script src="../lib/d3.js"></script>
+    <style>
+        *{margin: 0;padding: 0}
+        .line{ stroke-width: 2px;}
+        .node circle{ stroke-width: 1px; stroke: #333; fill: #fff }
+        .link path{ stroke-width: 1px; fill: none;}
+        .text{ font-size: 12px;}
+        .xaixs path,.yaxis path{ fill: none; stroke: #000; stroke-width: 1px;}
+        .xaixs line,.yaxis line{ stroke:#000}
+    </style>
+</head>
+<body>
+    <script type="text/javascript">
+        let width = (document.documentElement.clientWidth || document.body.clientWidth);
+        let height = (document.documentElement.clientHeight || document.body.clientHeight)-3;
+        let padding = {top:20,right:50,bottom:20,left:50}
+        let options = {
+            xAxisWidth:600,
+            binNum :20,
+            rangeMin:130,
+            rangeMax:210
+        }
+        let svg = d3.select('body').append('svg')
+                .attr('width',function() {
+                    return width;
+                })
+                .attr('height',function() {
+                    return height;
+                })
+                .attr('fill','#ccc')
+                .append('g');
+        //创建直方图布局
+        let histogram = d3.layout.histogram()
+                .range([options.rangeMin,options.rangeMax])
+                .bins(options.binNum)
+                .frequency(true);
+        //数据
+        let rand = d3.random.normal(170,10);
+        let dataset = [];
+        for(let i = 0;i<100;i++) {
+            dataset.push(rand());
+        }
+        let hisData = histogram(dataset);
+        console.log(hisData)
+        //x轴
+        let xAixsTicks = hisData.map(function(d) {
+            return d.x;
+        })
+        let xScale = d3.scale.ordinal()
+                .domain(xAixsTicks)
+                .rangeRoundBands([0,options.xAxisWidth],0.1)
+        let xAixs = d3.svg.axis()
+                .scale(xScale)
+                .orient('bottom')
+                .tickFormat(d3.format(".0f"));
+        svg.append('g')
+                .attr('class','xaixs')
+                .attr('transform',function() {
+                    return `translate(${padding.left},${height-padding.bottom})`;
+                })
+                .call(xAixs);
+        let yScale = d3.scale.linear()
+                .domain([d3.min(hisData,function(d) {
+                    console.log(d.y)
+                    return d.y;
+                }),d3.max(hisData,function(d) {
+                    return d.y;
+                })*1.2])
+                .range([height-padding.top-padding.bottom,0]);
+        let yAxis = d3.svg.axis()
+                .scale(yScale)
+                .orient('left');
+        svg.append('g')
+                .attr('class','yaxis')
+                .attr('transform',function() {
+                    return `translate(${padding.left},${padding.top})`
+                })
+                .call(yAxis)
+        let rectWidth = xScale.rangeBand();
+        let rectPadding = 6;
+        console.log(rectWidth)
+        let g_rects = svg.selectAll('.rect')
+                .data(hisData)
+                .enter()
+                .append('g')
+                .attr('class','rect')
+                .attr('transform',function() {
+                    return `translate(${padding.left},${padding.top})`
+                })
+        let rects = g_rects.append('rect').attr('x',function(d) {
+                    return xScale(d.x);
+                })
+                .attr('y',function(d) {
+                    console.log('y',yScale(d.y))
+                    return yScale(d.y);
+                })
+                .attr('width',rectWidth)
+                .attr('height',function(d) {
+                    return height-padding.top-padding.bottom-yScale(d.y);
+                })
+                .attr('fill','blue')
+
+
+
+
+    </script>
+</body>
+</html>

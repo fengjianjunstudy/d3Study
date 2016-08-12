@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>布局-打包图</title>
+    <script src="../lib/d3.js"></script>
+    <style>
+        .line{ stroke-width: 2px;}
+        .node circle{ stroke-width: 1px; stroke: #333; fill: #fff }
+        .link path{ stroke-width: 1px; fill: none;}
+        .text{ font-size: 12px;}
+    </style>
+</head>
+<body>
+    <script type="text/javascript">
+        let width = (document.body.clientWidth || document.documentElement.clientWidth)-16;
+        let height = (document.body.clientHeight || document.documentElement.clientHeight)-20;
+        let padding = {top:20,right:50,bottom:20,left:50}
+        let options = { r:10,diameter:960, margin:20}
+        let svg = d3.select('body').append('svg')
+                .attr('width',function() {
+                    return options.diameter;
+                })
+                .attr('height',function() {
+                    return options.diameter;
+                })
+                .append('g')
+//                .attr('transform',function() {
+//                    return `translate(300,300)`
+//                });
+        let color = d3.scale.linear()
+                .domain([-1,5])
+                .range(['hsl(152,80%,80%)','hsl(228,30%,40%)'])
+                .interpolate(d3.interpolateHsl)
+
+        let pack = d3.layout.pack()
+                .padding(2)
+                .size([options.diameter-options.margin,options.diameter-options.margin])
+                .radius(options.r)
+                .value(function(d) {
+                    return d.size;
+                })
+        d3.json('flare.json',function(err,root) {
+            if(err) {
+                throw  err;
+            }
+            let focus = root;
+            let view ;
+            let nodes = pack(root)
+            console.log(nodes);
+            let g_nodes = svg.selectAll('.node')
+                    .data(nodes)
+                    .enter()
+                    .append('g')
+                    .attr('class','node')
+                    .attr('transform',function(d) {
+                        return `translate(${d.x},${d.y})`
+                    })
+            let n_circles = g_nodes.append('circle')
+                    .attr('r',function(d) {
+                        return d.r;
+                    })
+                    .style('fill',function(d) {
+                        return color(d.depth)
+                    })
+
+            let g_text =svg.selectAll('.text')
+                    .data(nodes)
+                    .enter()
+                    .append('text')
+                    .attr('class','text')
+                    .text(function(d) {
+                        return d.children?d.name :'';
+                    })
+                    .attr('transform',function(d) {
+                        return `translate(${d.x},${d.y})`
+                    })
+                    .attr('text-anchor','middle')
+
+        })
+
+
+    </script>
+</body>
+</html>

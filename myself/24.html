@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>交互</title>
+    <script src="../lib/d3.js"></script>
+    <style>
+        .xAixs line,.xAixs path ,.yAixs line,.yAixs path{stroke-width: 1px; fill:none; stroke:#000;}
+        .line path{ stroke-width: 2px;}
+    </style>
+</head>
+<body>
+    <script type="text/javascript">
+        let width = (document.body.clientWidth || document.documentElement.clientWidth)-16;
+        let height = (document.body.clientHeight || document.documentElement.clientHeight)-20;
+        let svg = d3.select('body').append('svg')
+                .attr('width',function() {
+                    return width;
+                })
+                .attr('height',function() {
+                    return height;
+                })
+                .style('background','#eee');
+        let color = d3.scale.category10();
+        svg.on('touchstart',function() {
+            console.log(d3.touches(this)[0]);
+            console.log(d3.event.touches[0])
+        })
+    </script>
+</body>
+</html>

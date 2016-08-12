@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>布局-捆图</title>
+    <script src="../lib/d3.js"></script>
+    <style>
+        .line{ stroke-width: 2px;}
+        .node circle{ stroke-width: 1px; stroke: #333; fill: #fff }
+        .link path{ stroke-width: 1px; fill: none;}
+        .text{ font-size: 12px;}
+    </style>
+</head>
+<body>
+    <script type="text/javascript">
+        let width = (document.body.clientWidth || document.documentElement.clientWidth)-16;
+        let height = (document.body.clientHeight || document.documentElement.clientHeight)-20;
+        let svg = d3.select('body').append('svg')
+                .attr('width',function() {
+                    return width;
+                })
+                .attr('height',function() {
+                    return height;
+                })
+                .style('background','#eee')
+                .append('g')
+                .attr('transform',function() {
+                    return `translate(${width/2},${height/2})`
+                });
+        let color = d3.scale.category20();
+        let cities = {
+            name:'',
+            children:[
+                {name:'北京'},
+                {name:'上海'},
+                {name:'杭州'},
+                {name:'广州'},
+                {name:'桂林'},
+                {name:'昆明'},
+                {name:'成都'},
+                {name:'西安'},
+                {name:'太原'}
+            ]
+        }
+        let railway = [
+            {source:'北京',target:'上海'},
+            {source:'北京',target:'广州'},
+            {source:'北京',target:'杭州'},
+            {source:'北京',target:'西安'},
+            {source:'北京',target:'成都'},
+            {source:'北京',target:'太原'},
+            {source:'北京',target:'桂林'},
+            {source:'北京',target:'昆明'},
+            {source:'北京',target:'成都'},
+            {source:'上海',target:'杭州'},
+            {source:'昆明',target:'成都'},
+            {source:'西安',target:'太原'}
+        ]
+        //集群布局
+        let clusterLayout = d3.layout.cluster()
+                .size([360,height/2 -100])
+                .separation(function(a,b) {
+                    return (a.parent === b.parent ? 1 :2)/ a.depth;
+                })
+        //捆布局
+        let bundle = d3.layout.bundle();
+        function map(nodes,links) {
+            let hash = {}, resultLinks = [];
+            for(let i = 0; i<nodes.length;i++) {
+                hash[nodes[i].name] = nodes[i];
+            }
+            for(let j=0;j<links.length;j++){
+                resultLinks.push({
+                    source:hash[links[j].source],
+                    target:hash[links[j].target]
+                })
+            }
+            return resultLinks;
+        }
+        let nodes = clusterLayout(cities);
+        let olinks = map(nodes,railway);
+        let links = bundle(olinks);
+        console.log(links)
+        //经向线段生成器
+        let line = d3.svg.line.radial()
+                .interpolate('bundle')
+                .tension(0.5)
+                .radius(function(d) {
+                    return d.y;
+                })
+                .angle(function(d) {
+                    if(d.x !== 0) {
+                        return d.x/180*Math.PI;
+                    }
+                })
+
+        //绘制
+        let i = 0;
+        let g_links = svg.selectAll('.link')
+                .data(links)
+                .enter()
+                .append('g')
+                .attr('class','link')
+        g_links.append('path')
+                .attr('d',function(d) {
+                    return line(d);
+                })
+                .attr('stroke',function(d,i) {
+                    return color(i%20);
+                })
+        let g_nodes = svg.selectAll('.node')
+                .data(nodes.filter(function(c) {return !c.children}))
+                .enter()
+                .append('g')
+                .attr('class','node')
+                .attr('transform',function(d) {
+                    return `rotate(${d.x-90}) translate(${d.y})`
+                });
+        g_nodes.append('circle').attr('r',4.5)
+        g_nodes.append('text').text(function(d) {
+            return d.name;
+        })
+                .attr('transform',function(d) {
+                    return `translate(10)`
+                })
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>布局-集群图</title>
+    <script src="../lib/d3.js"></script>
+    <style>
+        .line{ stroke-width: 2px;}
+        .node circle{ stroke-width: 1px; stroke: #333; fill: #fff }
+        .link path{ stroke-width: 1px; fill: none;}
+        .text{ font-size: 12px;}
+    </style>
+</head>
+<body>
+    <script type="text/javascript">
+        let width = (document.body.clientWidth || document.documentElement.clientWidth)-16;
+        let height = (document.body.clientHeight || document.documentElement.clientHeight)-20;
+        let svg = d3.select('body').append('svg')
+                .attr('width',function() {
+                    return width;
+                })
+                .attr('height',function() {
+                    return height;
+                })
+                .style('background','#eee')
+                .append('g')
+                .attr('transform',function() {
+                    return `translate(${width/2},${height/2})`
+                });
+        let color = d3.scale.category20();
+        //集群布局
+        let clusterLayout = d3.layout.cluster()
+                .size([360,height/2 -100])
+                .separation(function(a,b) {
+                    return (a.parent === b.parent ? 1 :2)/ a.depth;
+                })
+        //放射性对角线生成器
+        let diagonal = d3.svg.diagonal.radial()
+                .projection(function(d) {
+                    let r = d.y,
+                        angle = d.x/180*Math.PI;
+                    return [r,angle];
+                })
+        d3.json('data12.json',function(err,root) {
+            if(err) {
+                throw err;
+            }
+            let nodes = clusterLayout(root);
+            let links = clusterLayout.links(nodes);
+            console.log(nodes,links);
+            let g_links = svg.selectAll('.link').data(links)
+                    .enter()
+                    .append('g')
+                    .attr('class','link');
+            let link_path = g_links.append('path')
+                    .attr('d',function(d,i) {
+                        return diagonal(d);
+                    })
+                    .style('stroke',function(d,i) {
+                        return color(0)
+                    })
+            let g_nodes = svg.selectAll('.node').data(nodes)
+                    .enter()
+                    .append('g')
+                    .attr('class','node')
+                    .attr('transform',function(d) {
+                        return `rotate(${d.x-90}) translate(${d.y})`
+                    })
+            g_nodes.append('circle')
+                    .attr('r',5)
+
+            g_nodes.append("text")
+                    .attr("dy", ".31em")
+                    .attr("text-anchor", function(d) { return d.x < 180 ? "start" : "end"; })
+                    .attr("transform", function(d) { return d.x < 180 ? "translate(8)" : "rotate(180)translate(-8)"; })
+                    .text(function(d) { return d.name; });
+        })
+    </script>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>d3 行为-缩放</title>
+    <script src="../lib/d3.js"></script>
+    <style>
+        .xAixs line,.xAixs path ,.yAixs line,.yAixs path{stroke-width: 1px; fill:none; stroke:#000;}
+        .line path{ stroke-width: 2px;}
+    </style>
+</head>
+<body>
+    <script type="text/javascript">
+        let width = (document.body.clientWidth || document.documentElement.clientWidth)-16;
+        let height = (document.body.clientHeight || document.documentElement.clientHeight)-20;
+        let svg = d3.select('body').append('svg')
+                .attr('width',function() {
+                    return width;
+                })
+                .attr('height',function() {
+                    return height;
+                })
+                .style('background','#eee');
+        let color = d3.scale.category10();
+        let data = [
+            {cx:150,cy:200,r:30},
+            {cx:220,cy:200,r:30},
+            {cx:150,cy:270,r:30},
+            {cx:220,cy:270,r:30}
+        ];
+        let zoom = d3.behavior.zoom().scaleExtent([1,10])
+                .on('zoom',function(d) {
+                    d3.select(this).attr('transform',function() {
+                        console.log(d3.event);
+                        return `translate(${d3.event.translate}) scale(${d3.event.scale})`
+                    })
+                });
+        let g = svg.append('g').call(zoom);
+        g.selectAll('circle').data(data).enter()
+                .append('circle')
+                .attr('r',function(d) {
+                    return d.r;
+                })
+                .attr('cx',function(d) {
+                    return d.cx;
+                })
+                .attr('cy',function(d) {
+                    return d.cy;
+                })
+                .attr('fill',function(d,i) {
+                    return color(i);
+                })
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>d3 行为-拖拽</title>
+    <script src="../lib/d3.js"></script>
+    <style>
+        .xAixs line,.xAixs path ,.yAixs line,.yAixs path{stroke-width: 1px; fill:none; stroke:#000;}
+        .line path{ stroke-width: 2px;}
+    </style>
+</head>
+<body>
+    <script type="text/javascript">
+        let width = (document.body.clientWidth || document.documentElement.clientWidth)-16;
+        let height = (document.body.clientHeight || document.documentElement.clientHeight)-20;
+        let svg = d3.select('body').append('svg')
+                .attr('width',function() {
+                    return width;
+                })
+                .attr('height',function() {
+                    return height;
+                })
+                .style('background','#eee');
+        let color = d3.scale.category10();
+        let data = [
+            {cx:150,cy:200,r:30},
+            {cx:300,cy:300,r:30}
+        ];
+        let drag = d3.behavior.drag()
+                .on('dragstart',function() {
+                    console.log('drag start');
+                })
+                .on('dragend',function() {
+                    console.log('drag end');
+                })
+                .on('drag',function(d) {
+                    d3.select(this)
+                            .attr('cx',function() {
+                                return d.cx = d3.event.x;
+                            })
+                            .attr('cy',function() {
+                                return d.cy = d3.event.y;
+                            })
+                })
+                .origin(function(d) {
+                    return {x: 500,y: 500}
+                });
+        svg.selectAll('circle').data(data).enter()
+                .append('circle')
+                .attr('r',function(d) {
+                    return d.r;
+                })
+                .attr('cx',function(d) {
+                    return d.cx;
+                })
+                .attr('cy',function(d) {
+                    return d.cy;
+                })
+                .attr('fill',function(d,i) {
+                    return color(i);
+                })
+                .call(drag)
+    </script>
+</body>
+</html>

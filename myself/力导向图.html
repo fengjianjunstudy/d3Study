@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>布局-力导向图</title>
+    <script src="../lib/d3.js"></script>
+    <style>
+        .line{ stroke-width: 2px;}
+        .node circle{ stroke-width: 1px; stroke: #333;}
+        .link line{ stroke: #000; stroke-width: 1px;}
+    </style>
+</head>
+<body>
+    <script type="text/javascript">
+        let width = (document.body.clientWidth || document.documentElement.clientWidth)-16;
+        let height = (document.body.clientHeight || document.documentElement.clientHeight)-20;
+        let svg = d3.select('body').append('svg')
+                .attr('width',function() {
+                    return width;
+                })
+                .attr('height',function() {
+                    return height;
+                })
+                .style('background','#eee');
+        let color = d3.scale.category10();
+        let nodes = [{name:"北京"},{name:"上海'"},{name:"广州"},{name:"天津"},{name:"太原"},{name:"深圳"},{name:"珠海"}];
+        let edges = [ { source : 0 , target: 1 } , { source : 0 , target: 2 } ,
+            { source : 0 , target: 3 } , { source : 1 , target: 4 } ,
+            { source : 1 , target: 5 } , { source : 1 , target: 6 } ];
+        let options = {
+            r:30
+        };
+        //拖拽行为
+
+        //数据转换
+        let force = d3.layout.force()
+                .nodes(nodes)
+                .links(edges)
+                .size([width-100,height-100])
+                .linkDistance(function(d,i) {
+                    return 200;
+                })
+                .charge([-500])
+                .linkStrength(function() {
+                    return Math.random();
+                })
+                .friction(0.9)
+        //布局开始计算数据
+        force.start();
+        force.on('start',function() {
+            console.log(d3.event)
+        })
+        force.on('tick',function() {
+            lines.attr('x1',function(d) {
+                    return d.source.x;
+                })
+                .attr('y1',function(d) {
+                    return d.source.y;
+                })
+                .attr('x2',function(d) {
+                    return d.target.x;
+                })
+                .attr('y2',function(d) {
+                    return d.target.y;
+                });
+            circles.attr('cx',function(d) {
+                        return d.x;
+                    })
+                    .attr('cy',function(d) {
+                        return d.y
+                    })
+
+            texts.attr('x',function(d) {
+                        return d.x;
+                    })
+                    .attr('y',function(d) {
+                        return d.y;
+                    })
+        })
+
+        console.log(nodes,edges)
+        //绘制连线
+        let g_links = svg.selectAll('.link').data(edges)
+                .enter()
+                .append('g')
+                .attr('class','link');
+        let lines = g_links.append('line')
+//                .attr('x1',function(d) {
+//                    return d.source.x;
+//                })
+//                .attr('y1',function(d) {
+//                    return d.source.y;
+//                })
+//                .attr('x2',function(d) {
+//                    return d.target.x;
+//                })
+//                .attr('y2',function(d) {
+//                    return d.target.y;
+//                })
+        //绘制节点
+        let g_nodes = svg.selectAll('node').data(nodes)
+                .enter()
+                .append('g')
+                .attr('class','node');
+        let drag = force.drag()
+                .on('dragend',function(d) {
+                    if(d.name === '北京') {
+                        d.fixed = true;
+                    }
+                })
+        let circles = g_nodes.append('circle')
+                .attr('r',options.r)
+//                .attr('cx',function(d) {
+//                    return d.x;
+//                })
+//                .attr('cy',function(d) {
+//                    return d.y
+//                })
+                .attr('fill',function(d,i) {
+                    return color(i);
+                })
+                .call(drag);
+        let texts = g_nodes.append('text')
+                .attr('class','text')
+                .text(function(d) {
+                    return d.name;
+                })
+//                .attr('x',function(d) {
+//                    return d.x;
+//                })
+//                .attr('y',function(d) {
+//                    return d.y;
+//                })
+                .attr('text-anchor','middle')
+                .attr('dy',5)
+
+    </script>
+</body>
+</html>

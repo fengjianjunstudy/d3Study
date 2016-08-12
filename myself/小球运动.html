@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>小球运动</title>
+    <script src="../lib/d3.js"></script>
+    <style>
+        .xAixs line,.xAixs path ,.yAixs line,.yAixs path{stroke-width: 1px; fill:none; stroke:#000;}
+        .line path{ stroke-width: 2px;}
+    </style>
+</head>
+<body>
+    <script type="text/javascript">
+        let width = (document.body.clientWidth || document.documentElement.clientWidth)-16;
+        let height = (document.body.clientHeight || document.documentElement.clientHeight)-20;
+        let svg = d3.select('body').append('svg')
+                .attr('width',function() {
+                    return width;
+                })
+                .attr('height',function() {
+                    return height;
+                })
+                .style('background','#eee');
+        let color = d3.scale.category10();
+        let r = 10;
+        let i;
+        svg.append('circle')
+                .attr('cx',function() {
+                    return width/2;
+                })
+                .attr('cy',function() {
+                    return height/2;
+                })
+                .attr('r',r)
+                .on('click',function() {
+                    console.log(d3.event)
+                });
+        function drawBall() {
+            if(r>200) {
+                return false;
+            }
+            r = r * 1.05;
+            svg.select('circle').attr('r',r).attr('fill',function() {
+                return color(i%10)
+            });
+            i++;
+        }
+        d3.timer(drawBall,500);
+        d3.select('body').on('keydown',function() {
+            console.log(d3.event)
+        })
+    </script>
+</body>
+</html>

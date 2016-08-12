@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>时钟</title>
+    <script src="../lib/d3.js"></script>
+    <style>
+        .xAixs line,.xAixs path ,.yAixs line,.yAixs path{stroke-width: 1px; fill:none; stroke:#000;}
+        .line path{ stroke-width: 2px;}
+    </style>
+</head>
+<body>
+    <script type="text/javascript">
+        let width = (document.body.clientWidth || document.documentElement.clientWidth)-16;
+        let height = (document.body.clientHeight || document.documentElement.clientHeight)-20;
+        let svg = d3.select('body').append('svg')
+                .attr('width',function() {
+                    return width;
+                })
+                .attr('height',function() {
+                    return height;
+                })
+                .style('background','#eee');
+        let color = d3.scale.category10();
+        function getTime() {
+            let time = new Date();
+            let hour,minute,second;
+            hour = toTwoNum(time.getHours());
+            minute = toTwoNum(time.getMinutes());
+            second = toTwoNum(time.getSeconds());
+            return `${hour}:${minute}:${second}`
+        }
+        function toTwoNum (d) {
+            return d<10?'0'+d:d;
+        }
+        function drawClock() {
+            svg.append('text').attr('x',width/2).attr('y',height/3).attr('text-anchor','middle');
+        }
+        function updateTime() {
+            let time = getTime();
+            svg.select('text').text(time);
+        }
+        drawClock();
+        setInterval(updateTime,1000);
+    </script>
+</body>
+</html>
